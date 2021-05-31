@@ -4985,8 +4985,11 @@ Keep all original rows and also all original values
             Left boundary.
         right : scalar or list-like
             Right boundary.
-        inclusive : bool, default True
-            Include boundaries.
+        inclusive : bool | (bool, bool) | str, default True
+            Include boundaries. When a single boolean is passed it applies to both boundaries.
+            When a tuple is passed the first element applies to the left boundary and the second element
+            to the second boundary. Alternatively the strings "left" and "right" can be passed to denote
+            left and right inlusive intervals.
 
         Returns
         -------
@@ -5037,11 +5040,26 @@ Keep all original rows and also all original values
         3    False
         dtype: bool
         """
-        if inclusive:
+
+        if inclusive == True:
+            inclusive = (True, True)
+        elif inclusive == False:
+            inclusive = (False, False)
+        elif inclusive == "left":
+            inclusive = (True, False)
+        elif inclusive == "right":
+            inclusive = (False, True)
+
+        (linclusive, rinclusive) = inclusive
+
+        if linclusive:
             lmask = self >= left
-            rmask = self <= right
         else:
             lmask = self > left
+
+        if rinclusive:
+            rmask = self <= right
+        else:
             rmask = self < right
 
         return lmask & rmask

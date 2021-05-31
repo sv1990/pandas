@@ -38,3 +38,36 @@ class TestBetween:
         result = ser.between(left, right)
         expected = (ser >= left) & (ser <= right)
         tm.assert_series_equal(result, expected)
+
+    def test_inclusive(self):
+        ser = Series([1, 2, 3, 4, 5, 6, 7, 8])
+        left = 2
+        right = 5
+
+        result = ser.between(left, right)
+        expected = (ser >= left) & (ser <= right)
+        tm.assert_almost_equal(result, expected)
+
+        result = ser.between(left, right, inclusive=(True, True))
+        expected = (ser >= left) & (ser <= right)
+        tm.assert_almost_equal(result, expected)
+
+        result = ser.between(left, right, inclusive=False)
+        expected = (ser > left) & (ser < right)
+        tm.assert_almost_equal(result, expected)
+
+        result = ser.between(left, right, inclusive=(False, False))
+        expected = (ser > left) & (ser < right)
+        tm.assert_almost_equal(result, expected)
+
+        result = ser.between(left, right, inclusive=(True, False))
+        expected = (ser >= left) & (ser < right)
+        tm.assert_almost_equal(result, expected)
+
+        result = ser.between(left, right, inclusive="left")
+        expected = (ser >= left) & (ser < right)
+        tm.assert_almost_equal(result, expected)
+
+        result = ser.between(left, right, inclusive="right")
+        expected = (ser > left) & (ser <= right)
+        tm.assert_almost_equal(result, expected)
